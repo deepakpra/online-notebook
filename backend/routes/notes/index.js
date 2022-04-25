@@ -61,17 +61,15 @@ router.put('/updatenotes/:id', checkToken, async (req, res) => {
     return res.status(404).send('Not allowed')
   }
 
-  note = await Notes.findByIdAndUpdate(
-    req.params.id,
-    { $set: newNote },
-    { new: true }
-  )
+  note = await Notes.findByIdAndUpdate(req.params.id, { $set: newNote }, { new: true })
   res.send(note)
 })
 
 //route- 4: deleteNote
 router.delete('/deletenotes/:id', checkToken, async (req, res) => {
-  //check if user is same who is deleting
+  //check if id is present
+  if (!req.params.id) return res.status(404).send('Not found')
+
   let note = await Notes.findById(req.params.id)
   if (!note) {
     return res.status(404).send('Not found')

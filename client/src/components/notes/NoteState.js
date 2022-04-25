@@ -1,7 +1,16 @@
 import NoteContext from './NoteContext'
 import { useState } from 'react'
-
+import { toast } from 'react-toastify'
 const NoteState = (props) => {
+  const deleteToast = () => {
+    toast.success('Note Deleted')
+  }
+  const updateToast = () => {
+    toast.success('Note Upadted')
+  }
+  const addToast = () => {
+    toast.success('Note Added')
+  }
   const init = [
     {
       _id: '6251e1ffa34ad1e48a2294f4',
@@ -26,7 +35,6 @@ const NoteState = (props) => {
       },
     })
     const data = await res.json()
-    console.log(data)
     setNotes(data)
   }
 
@@ -42,10 +50,13 @@ const NoteState = (props) => {
       body: JSON.stringify({ title, content }),
     })
     const newNote = await res.json()
-    console.log(newNote)
+
+    // If data is not stored
+    if (!newNote._id) return
     setNotes((prevNotes) => {
       return [...prevNotes, { ...newNote }]
     })
+    addToast()
   }
 
   const deleteNote = async (id) => {
@@ -60,9 +71,24 @@ const NoteState = (props) => {
           'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyNGRkMTMzMDJhNzViMThjNzhmMTI2OCIsImlhdCI6MTY0OTQyMTcyNX0.jkSa68GtN_ex4qEndsMoYouX3fW8BuKyGzBL-r9J4z4',
       },
     })
+    deleteToast()
     await res.json()
   }
-  const updateNotes = async () => {}
+  const updateNotes = async ({ title, content, id }) => {
+    const res = await fetch(`http://localhost:5000/api/updatenotes/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Content-Type': 'application/json',
+        authToken:
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyNGRkMTMzMDJhNzViMThjNzhmMTI2OCIsImlhdCI6MTY0OTQyMTcyNX0.jkSa68GtN_ex4qEndsMoYouX3fW8BuKyGzBL-r9J4z4',
+      },
+      body: JSON.stringify({ title, content }),
+    })
+    await res.json()
+    updateToast()
+    loadNotes()
+  }
   return (
     <NoteContext.Provider value={{ notes, addNote, deleteNote, loadNotes, updateNotes }}>
       {props.children}

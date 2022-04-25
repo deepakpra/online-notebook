@@ -10,7 +10,7 @@ const AddNote = () => {
       return { ...pre, [e.target.name]: e.target.value }
     })
   }
-  
+
   const handleClick = (e) => {
     e.preventDefault()
     if (!note.title || !note.content) return
@@ -31,6 +31,8 @@ const AddNote = () => {
           value={note.title}
           onChange={handleChange}
           className='form-control text-white bg-dark'
+          min={5}
+          required
         />
       </div>
 
@@ -44,13 +46,18 @@ const AddNote = () => {
           name='content'
           value={note.content}
           onChange={handleChange}
-          rows='4'></textarea>
+          minLength={5}
+          required
+          rows='4'
+        ></textarea>
       </div>
 
       <button
+        disabled={note.title.length < 5 || note.content.length < 5}
         type='submit'
         className='btn btn-primary mb-4 px-3 py-2'
-        onClick={handleClick}>
+        onClick={handleClick}
+      >
         Add Note
       </button>
     </form>
